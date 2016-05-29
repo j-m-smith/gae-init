@@ -9,7 +9,7 @@ from flask_oauthlib import client as oauth
 from google.appengine.ext import ndb
 import flask
 import flask_login
-import flask_wtf as wtf
+import flask_wtf
 import unidecode
 import wtforms
 
@@ -181,7 +181,7 @@ def permission_required(permission=None, methods=None):
 ###############################################################################
 # Sign in stuff
 ###############################################################################
-class SignInForm(wtf.Form):
+class SignInForm(flask_wtf.Form):
   email = wtforms.StringField(
     'Email',
     [wtforms.validators.required()],
@@ -195,7 +195,7 @@ class SignInForm(wtf.Form):
     'Keep me signed in',
     [wtforms.validators.optional()],
   )
-  recaptcha = wtf.RecaptchaField()
+  recaptcha = flask_wtf.RecaptchaField()
   next_url = wtforms.HiddenField()
 
 
@@ -235,13 +235,13 @@ def signin():
 ###############################################################################
 # Sign up stuff
 ###############################################################################
-class SignUpForm(wtf.Form):
+class SignUpForm(flask_wtf.Form):
   email = wtforms.StringField(
     'Email',
     [wtforms.validators.required(), wtforms.validators.email()],
     filters=[util.email_filter],
   )
-  recaptcha = wtf.RecaptchaField()
+  recaptcha = flask_wtf.RecaptchaField()
 
 
 @app.route('/signup/', methods=['GET', 'POST'])
