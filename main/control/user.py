@@ -2,12 +2,12 @@
 
 import copy
 
-from flask.ext import login
-from flask.ext import wtf
 from google.appengine.ext import ndb
-from webargs.flaskparser import parser
 from webargs import fields as wf
+from webargs.flaskparser import parser
 import flask
+import flask_login
+import flask_wtf as wtf
 import wtforms
 
 import auth
@@ -211,7 +211,7 @@ def user_reset(token=None):
     return flask.redirect(flask.url_for('welcome'))
 
   if auth.is_logged_in():
-    login.logout_user()
+    flask_login.logout_user()
     return flask.redirect(flask.request.path)
 
   form = UserResetForm()
@@ -249,7 +249,7 @@ class UserActivateForm(wtf.Form):
 @app.route('/user/activate/<token>/', methods=['GET', 'POST'])
 def user_activate(token):
   if auth.is_logged_in():
-    login.logout_user()
+    flask_login.logout_user()
     return flask.redirect(flask.request.path)
 
   user_db = model.User.get_by('token', token)

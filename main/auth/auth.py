@@ -5,11 +5,11 @@ from __future__ import absolute_import
 import functools
 import re
 
-from flask.ext import login
-from flask.ext import wtf
-from flask.ext.oauthlib import client as oauth
+from flask_oauthlib import client as oauth
 from google.appengine.ext import ndb
 import flask
+import flask_login
+import flask_wtf as wtf
 import unidecode
 import wtforms
 
@@ -27,10 +27,10 @@ _signals = flask.signals.Namespace()
 ###############################################################################
 # Flask Login
 ###############################################################################
-login_manager = login.LoginManager()
+login_manager = flask_login.LoginManager()
 
 
-class AnonymousUser(login.AnonymousUserMixin):
+class AnonymousUser(flask_login.AnonymousUserMixin):
   id = 0
   admin = False
   name = 'Anonymous'
@@ -84,19 +84,19 @@ login_manager.init_app(app)
 
 
 def current_user_id():
-  return login.current_user.id
+  return flask_login.current_user.id
 
 
 def current_user_key():
-  return login.current_user.user_db.key if login.current_user.user_db else None
+  return flask_login.current_user.user_db.key if flask_login.current_user.user_db else None
 
 
 def current_user_db():
-  return login.current_user.user_db
+  return flask_login.current_user.user_db
 
 
 def is_logged_in():
-  return login.current_user.id != 0
+  return flask_login.current_user.id != 0
 
 
 ###############################################################################
@@ -287,7 +287,7 @@ def signup():
 ###############################################################################
 @app.route('/signout/')
 def signout():
-  login.logout_user()
+  flask_login.logout_user()
   return flask.redirect(util.param('next') or flask.url_for('signin'))
 
 
@@ -410,7 +410,7 @@ def signin_user_db(user_db):
     'remember': False,
   })
   flask.session.pop('auth-params', None)
-  if login.login_user(flask_user_db, remember=auth_params['remember']):
+  if flask_login.login_user(flask_user_db, remember=auth_params['remember']):
     user_db.put_async()
     return flask.redirect(util.get_next_url(auth_params['next']))
   flask.flash('Sorry, but you could not sign in.', category='danger')

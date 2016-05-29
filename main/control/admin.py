@@ -1,7 +1,7 @@
 # coding: utf-8
 
-from flask.ext import wtf
 import flask
+import flask_wtf as wtf
 import wtforms
 
 import auth
